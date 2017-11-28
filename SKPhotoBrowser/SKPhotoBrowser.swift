@@ -121,6 +121,10 @@ open class SKPhotoBrowser: UIViewController {
     override open func viewDidLoad() {
         super.viewDidLoad()
         
+        if #available(iOS 11.0, *) {
+            self.view.accessibilityIgnoresInvertColors = true
+        }
+        
         configureAppearance()
         configureCloseButton()
         configureDeleteButton()
@@ -222,7 +226,7 @@ open class SKPhotoBrowser: UIViewController {
         NSObject.cancelPreviousPerformRequests(withTarget: self)
     }
     
-    open func dismissPhotoBrowser(animated: Bool, completion: ((Void) -> Void)? = nil) {
+    open func dismissPhotoBrowser(animated: Bool, completion: (() -> Void)? = nil) {
         prepareForClosePhotoBrowser()
         if !animated {
             modalTransitionStyle = .crossDissolve
@@ -607,22 +611,22 @@ private extension SKPhotoBrowser {
         let captionViews = pagingScrollView.getCaptionViews()
         
         UIView.animate(withDuration: 0.35,
-            animations: { () -> Void in
-                let alpha: CGFloat = hidden ? 0.0 : 1.0
-                self.toolbar.alpha = alpha
-                self.toolbar.frame = hidden ? self.frameForToolbarHideAtOrientation() : self.frameForToolbarAtOrientation()
-                
-                if SKPhotoBrowserOptions.displayCloseButton {
-                    self.closeButton.alpha = alpha
-                    self.closeButton.frame = hidden ? self.closeButton.hideFrame : self.closeButton.showFrame
-                }
-                if self.showDeleteButton {
-                    self.deleteButton.alpha = alpha
-                    self.deleteButton.frame = hidden ? self.deleteButton.hideFrame : self.deleteButton.showFrame
-                }
-                captionViews.forEach { $0.alpha = alpha }
-            },
-            completion: nil)        
+                       animations: { () -> Void in
+                        let alpha: CGFloat = hidden ? 0.0 : 1.0
+                        self.toolbar.alpha = alpha
+                        self.toolbar.frame = hidden ? self.frameForToolbarHideAtOrientation() : self.frameForToolbarAtOrientation()
+                        
+                        if SKPhotoBrowserOptions.displayCloseButton {
+                            self.closeButton.alpha = alpha
+                            self.closeButton.frame = hidden ? self.closeButton.hideFrame : self.closeButton.showFrame
+                        }
+                        if self.showDeleteButton {
+                            self.deleteButton.alpha = alpha
+                            self.deleteButton.frame = hidden ? self.deleteButton.hideFrame : self.deleteButton.showFrame
+                        }
+                        captionViews.forEach { $0.alpha = alpha }
+        },
+                       completion: nil)
         if !permanent {
             hideControlsAfterDelay()
         }
